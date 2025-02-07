@@ -3,18 +3,25 @@
 {% block title %}Welcome - MVC Framework{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container flex-1">
     <div class="row justify-content-center mb-5">
         <div class="col-md-8 text-center">
-            <h1 class="display-4 mb-4">Welcome to MVC Framework</h1>
-            <p class="lead mb-4">A powerful and secure PHP MVC framework for building modern web applications.</p>
+            <div class="mb-4">
+                <i class="bi bi-code-square text-primary display-1"></i>
+            </div>
+            <h1 class="display-4 mb-3">Welcome to MVC Framework</h1>
+            <p class="lead mb-4 text-muted">A powerful and secure PHP MVC framework for building modern web applications.</p>
             
             {% if not is_authenticated %}
                 <div class="row justify-content-center">
                     <div class="col-md-6">
-                        <div class="d-grid gap-3">
-                            <a href="/login" class="btn btn-primary btn-lg">Login</a>
-                            <a href="/register" class="btn btn-outline-primary btn-lg">Register</a>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <a href="/login" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                            </a>
+                            <a href="/register" class="btn btn-outline-primary btn-lg px-4">
+                                <i class="bi bi-person-plus me-2"></i>Register
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -22,29 +29,49 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="mb-4">Latest Articles</h2>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-4">
+                <i class="bi bi-journals text-primary me-3 h2 mb-0"></i>
+                <h2 class="mb-0">Latest Articles</h2>
+            </div>
             
             {% if articles|length > 0 %}
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {% for article in articles %}
                         <div class="col">
-                            <div class="card h-100">
+                            <div class="card h-100 border-0 shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ article.title }}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">By {{ article.getAuthor().email }}</h6>
-                                    <p class="card-text">{{ article.content|slice(0, 150) }}{% if article.content|length > 150 %}...{% endif %}</p>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-person-circle text-primary me-2"></i>
+                                        <span>{{ article.getAuthor().email }}</span>
+                                    </div>
+                                    <h5 class="card-title">
+                                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                        {{ article.title }}
+                                    </h5>
+                                    <p class="card-text text-muted mt-3">{{ article.content|slice(0, 150) }}{% if article.content|length > 150 %}...{% endif %}</p>
                                 </div>
-                                <div class="card-footer">
-                                    <small class="text-muted">Posted on {{ article.created_at|date('F j, Y') }}</small>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="bi bi-calendar3 me-2"></i>
+                                        <small>{{ article.created_at|date('F j, Y') }}</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="text-muted">No articles have been published yet.</p>
+                <div class="text-center py-5">
+                    <i class="bi bi-journal-x display-4 text-muted mb-3"></i>
+                    <p class="text-muted mb-4">No articles have been published yet.</p>
+                    {% if is_authenticated %}
+                        <a href="/dashboard/article/create" class="btn btn-primary">
+                            <i class="bi bi-plus-lg me-2"></i>Create First Article
+                        </a>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>
