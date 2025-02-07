@@ -105,6 +105,7 @@ class ComposerStaticInitb2881b0947bac7fea18975d9cb8b7e57
     );
 
     public static $classMap = array (
+        'App\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Controllers/AdminController.php',
         'App\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Controllers/AuthController.php',
         'App\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/DashboardController.php',
         'App\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Controllers/HomeController.php',
@@ -113,7 +114,9 @@ class ComposerStaticInitb2881b0947bac7fea18975d9cb8b7e57
         'App\\Core\\Logger' => __DIR__ . '/../..' . '/app/Core/Logger.php',
         'App\\Core\\Router' => __DIR__ . '/../..' . '/app/Core/Router.php',
         'App\\Core\\Security' => __DIR__ . '/../..' . '/app/Core/Security.php',
+        'App\\Core\\Twig\\SecurityExtension' => __DIR__ . '/../..' . '/app/Core/Twig/SecurityExtension.php',
         'App\\Core\\Validator' => __DIR__ . '/../..' . '/app/Core/Validator.php',
+        'App\\Models\\Article' => __DIR__ . '/../..' . '/app/Models/Article.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'CURLStringFile' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',

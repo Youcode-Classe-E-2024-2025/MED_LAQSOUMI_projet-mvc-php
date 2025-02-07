@@ -23,16 +23,18 @@ class AdminController extends Controller
     }
 
     public function dashboard()
-    {
-        $user = new User();
-        $totalUsers = $user->count();
-        $recentUsers = $user->findRecent(5);
-        
-        return $this->render('admin/dashboard',  [
-            'totalUsers' => $totalUsers,
-            'recentUsers' => $recentUsers
-        ]);
-    }
+{
+    $user = new User();
+    $totalUsers = $user->count();
+    $recentUsers = $user->findRecent(5);
+    $allUsers = $user->findAll(); // Add this line
+    
+    return $this->render('admin/dashboard', [
+        'totalUsers' => $totalUsers,
+        'recentUsers' => $recentUsers,
+        'users' => $allUsers // Add this line
+    ]);
+}
 
     public function users()
     {

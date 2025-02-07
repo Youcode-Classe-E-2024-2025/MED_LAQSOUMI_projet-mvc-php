@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Controllers\\AdminController' => $baseDir . '/app/Controllers/AdminController.php',
     'App\\Controllers\\AuthController' => $baseDir . '/app/Controllers/AuthController.php',
     'App\\Controllers\\DashboardController' => $baseDir . '/app/Controllers/DashboardController.php',
     'App\\Controllers\\HomeController' => $baseDir . '/app/Controllers/HomeController.php',
@@ -14,7 +15,9 @@ return array(
     'App\\Core\\Logger' => $baseDir . '/app/Core/Logger.php',
     'App\\Core\\Router' => $baseDir . '/app/Core/Router.php',
     'App\\Core\\Security' => $baseDir . '/app/Core/Security.php',
+    'App\\Core\\Twig\\SecurityExtension' => $baseDir . '/app/Core/Twig/SecurityExtension.php',
     'App\\Core\\Validator' => $baseDir . '/app/Core/Validator.php',
+    'App\\Models\\Article' => $baseDir . '/app/Models/Article.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CURLStringFile' => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
