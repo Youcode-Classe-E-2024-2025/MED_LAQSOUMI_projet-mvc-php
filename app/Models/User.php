@@ -28,19 +28,18 @@ class User {
         $db = Database::getInstance();
         
         if ($this->id === null) {
-            $sql = "INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO users (email, password, role, created_at) VALUES (?, ?, ?, ?)";
             $stmt = $db->prepare($sql);
             return $stmt->execute([
-                $this->username,
                 $this->email,
                 Security::hashPassword($this->password),
                 $this->role,
                 $this->created_at
             ]);
         } else {
-            $sql = "UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?";
+            $sql = "UPDATE users SET email = ?, password = ?, role = ? WHERE id = ?";
             $stmt = $db->prepare($sql);
-            return $stmt->execute([$this->username, $this->email, $this->role, $this->id]);
+            return $stmt->execute([$this->email, Security::hashPassword($this->password), $this->role, $this->id]);
         }
     }
     
@@ -97,12 +96,6 @@ class User {
         return $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
     }
 
-    public static function findRecent(int $limit): array {
-        $db = Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM users ORDER BY created_at DESC LIMIT ?");
-        $stmt->execute([$limit]);
-        return $stmt->fetchAll();
-    }
 
     public static function delete(int $id): bool {
         $db = Database::getInstance();
@@ -134,5 +127,15 @@ class User {
     public static function create(array $data): bool {
         $user = new self($data);
         return $user->save();
+    }
+
+    public static function getEmailById(int $id): ?string {
+        $user = self::findById($id);
+        return $user->getEmail();
+    }
+
+    public static function getRoleById(int $id): ?string {
+        $user = self::findById($id);
+        return $user->getRole();
     }
 }

@@ -25,14 +25,14 @@ class AdminController extends Controller
     public function dashboard()
 {
     // Change from instance methods to static methods
-    $totalUsers = User::count();
-    $recentUsers = User::findRecent(5);
     $allUsers = User::findAll();
+    $userEmail = User::getEmailById($_SESSION['user_id']);
+    $userRole = User::getRoleById($_SESSION['user_id']);
     
     return $this->render('admin/dashboard', [
-        'totalUsers' => $totalUsers,
-        'recentUsers' => $recentUsers,
-        'users' => $allUsers
+        'users' => $allUsers,
+        'userEmail' => $userEmail,
+        'userRole' => $userRole
     ]);
 }
 
@@ -50,13 +50,12 @@ public function createUser()
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
-            'username' => $_POST['username'] ?? '',
             'email' => $_POST['email'] ?? '',
             'password' => isset($_POST['password']) ? $_POST['password'] : '',
             'role' => $_POST['role'] ?? 'user'
         ];
         
-        if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
+        if (empty($data['email']) || empty($data['password'])) {
             $_SESSION['error'] = 'All fields are required';
             return $this->render('admin/users/create');
         }
@@ -83,8 +82,8 @@ public function editUser($id)
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
-            'username' => $_POST['username'],
             'email' => $_POST['email'],
+            'password' => $_POST['password'],
             'role' => $_POST['role']
         ];
         
