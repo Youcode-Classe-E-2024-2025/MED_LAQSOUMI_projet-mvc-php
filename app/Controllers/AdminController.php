@@ -24,36 +24,35 @@ class AdminController extends Controller
 
     public function dashboard()
 {
-    $user = new User();
-    $totalUsers = $user->count();
-    $recentUsers = $user->findRecent(5);
-    $allUsers = $user->findAll(); // Add this line
+    // Change from instance methods to static methods
+    $totalUsers = User::count();
+    $recentUsers = User::findRecent(5);
+    $allUsers = User::findAll();
     
     return $this->render('admin/dashboard', [
         'totalUsers' => $totalUsers,
         'recentUsers' => $recentUsers,
-        'users' => $allUsers // Add this line
+        'users' => $allUsers
     ]);
 }
 
-    public function users()
-    {
-        $user = new User();
-        $users = $user->findAll();
-        
-        return $this->render('admin/users/index', [
-            'users' => $users
-        ]);
-    }
+public function users()
+{
+    // Change this too
+    $users = User::findAll();
+    
+    return $this->render('admin/users/index', [
+        'users' => $users
+    ]);
+}
 
-    public function createUser()
+public function createUser()
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user = new User();
         $data = [
             'username' => $_POST['username'] ?? '',
             'email' => $_POST['email'] ?? '',
-            'password' => isset($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : '',
+            'password' => isset($_POST['password']) ? $_POST['password'] : '',
             'role' => $_POST['role'] ?? 'user'
         ];
         
@@ -62,7 +61,7 @@ class AdminController extends Controller
             return $this->render('admin/users/create');
         }
         
-        if ($user->create($data)) {
+        if (User::create($data)) {  // Change to static method
             $_SESSION['success'] = 'User created successfully';
             $this->redirect('/admin/users');
         }
@@ -73,51 +72,49 @@ class AdminController extends Controller
     return $this->render('admin/users/create');
 }
 
-    public function editUser($id)
-    {
-        $user = new User();
-        $userData = $user->findById($id);
+public function editUser($id)
+{
+    $userData = User::findById($id);  // Change to static method
+    
+    if (!$userData) {
+        header('Location: /admin/users');
+        exit;
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = [
+            'username' => $_POST['username'],
+            'email' => $_POST['email'],
+            'role' => $_POST['role']
+        ];
         
-        if (!$userData) {
+        if (!empty($_POST['password'])) {
+            $data['password'] = $_POST['password'];
+        }
+        
+        if (User::update($id, $data)) {  // Change to static method
+            $_SESSION['success'] = 'User updated successfully';
             header('Location: /admin/users');
             exit;
         }
         
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'username' => $_POST['username'],
-                'email' => $_POST['email'],
-                'role' => $_POST['role']
-            ];
-            
-            if (!empty($_POST['password'])) {
-                $data['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            }
-            
-            if ($user->update($id, $data)) {
-                $_SESSION['success'] = 'User updated successfully';
-                header('Location: /admin/users');
-                exit;
-            }
-            
-            $_SESSION['error'] = 'Error updating user';
-        }
-        
-        return $this->render('admin/users/edit', ['user' => $userData]);
+        $_SESSION['error'] = 'Error updating user';
     }
+    
+    return $this->render('admin/users/edit', ['user' => $userData]);
+}
 
-    public function deleteUser($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = new User();
-            if ($user->delete($id)) {
-                $_SESSION['success'] = 'User deleted successfully';
-            } else {
-                $_SESSION['error'] = 'Error deleting user';
-            }
+public function deleteUser($id)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (User::delete($id)) {  // Change to static method
+            $_SESSION['success'] = 'User deleted successfully';
+        } else {
+            $_SESSION['error'] = 'Error deleting user';
         }
-        
-        header('Location: /admin/users');
-        exit;
     }
+    
+    header('Location: /admin/users');
+    exit;
+}
 }

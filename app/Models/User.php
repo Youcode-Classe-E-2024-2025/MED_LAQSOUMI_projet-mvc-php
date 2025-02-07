@@ -88,7 +88,7 @@ class User {
     // Admin methods
     public static function findAll(): array {
         $db = Database::getInstance();
-        $stmt = $db->query("SELECT * FROM users ORDER BY created_at DESC");
+        $stmt = $db->query("SELECT * FROM users");
         return $stmt->fetchAll();
     }
 

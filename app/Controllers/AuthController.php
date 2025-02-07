@@ -27,7 +27,9 @@ class AuthController extends Controller {
                 if ($user && $user->verifyPassword($_POST['password'])) {
                     $_SESSION['user_id'] = $user->getId();
                     $_SESSION['user_role'] = $user->getRole();
-                    
+                    if ($_SESSION['user_role'] === 'admin'){
+                        $this->redirect('/admin/dashboard');
+                    }
                     $this->redirect('/dashboard');
                 }
                 

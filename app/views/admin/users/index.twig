@@ -2,60 +2,64 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Manage Users</h2>
-    
-    {% if session.success %}
-        <div class="alert alert-success">{{ session.success }}</div>
-    {% endif %}
-    
-    {% if session.error %}
-        <div class="alert alert-danger">{{ session.error }}</div>
-    {% endif %}
-
-    <div class="mb-3">
-        <a href="{{ path('/admin/users/create') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Add New User
-        </a>
+    {# Debug section #}
+    <div class="debug-info">
+        <h3>Debug Information</h3>
+        <p>Total Users: {{ totalUsers is defined ? totalUsers : 'undefined' }}</p>
+        <p>Recent Users Count: {{ recentUsers is defined ? recentUsers|length : 'undefined' }}</p>
+        <p>All Users Count: {{ users is defined ? users|length : 'undefined' }}</p>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        <span class="badge {% if user.role == 'admin' %}bg-danger{% else %}bg-primary{% endif %}">
-                            {{ user.role }}
-                        </span>
-                    </td>
-                    <td>{{ user.created_at|date('Y-m-d H:i') }}</td>
-                    <td>
-                        <a href="{{ path('/admin/users/edit/' ~ user.id) }}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="{{ path('/admin/users/delete/' ~ user.id) }}" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    {# Users Table #}
+    {% if users is defined and users is not empty %}
+        <div class="table-responsive mt-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge {% if user.role == 'admin' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ user.role }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at|date('Y-m-d H:i') }}</td>
+                            <td>
+                                <a href="{{ path('/admin/users/edit/' ~ user.id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ path('/admin/users/delete/' ~ user.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-4">
+            No users found. Please check:
+            <ul>
+                <li>Database connection</li>
+                <li>Users table exists</li>
+                <li>Data exists in the users table</li>
+            </ul>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
