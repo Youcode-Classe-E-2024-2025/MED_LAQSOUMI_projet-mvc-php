@@ -19,9 +19,7 @@ class AdminController extends Controller
 
     private function isAdmin()
     {
-        $user = new User();
-        $currentUser = $user->findById($_SESSION['user_id']);
-        return isset($currentUser['role']) && $currentUser['role'] === 'admin';
+        return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
     }
 
     public function dashboard()
@@ -30,7 +28,7 @@ class AdminController extends Controller
         $totalUsers = $user->count();
         $recentUsers = $user->findRecent(5);
         
-        return $this->view('admin/dashboard', [
+        return $this->render('admin/dashboard',  [
             'totalUsers' => $totalUsers,
             'recentUsers' => $recentUsers
         ]);
@@ -41,33 +39,37 @@ class AdminController extends Controller
         $user = new User();
         $users = $user->findAll();
         
-        return $this->view('admin/users/index', [
+        return $this->render('admin/users/index', [
             'users' => $users
         ]);
     }
 
     public function createUser()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = new User();
-            $data = [
-                'username' => $_POST['username'],
-                'email' => $_POST['email'],
-                'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
-                'role' => $_POST['role']
-            ];
-            
-            if ($user->create($data)) {
-                $_SESSION['success'] = 'User created successfully';
-                header('Location: /admin/users');
-                exit;
-            }
-            
-            $_SESSION['error'] = 'Error creating user';
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $user = new User();
+        $data = [
+            'username' => $_POST['username'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'password' => isset($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : '',
+            'role' => $_POST['role'] ?? 'user'
+        ];
+        
+        if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
+            $_SESSION['error'] = 'All fields are required';
+            return $this->render('admin/users/create');
         }
         
-        return $this->view('admin/users/create');
+        if ($user->create($data)) {
+            $_SESSION['success'] = 'User created successfully';
+            $this->redirect('/admin/users');
+        }
+        
+        $_SESSION['error'] = 'Error creating user';
     }
+    
+    return $this->render('admin/users/create');
+}
 
     public function editUser($id)
     {
@@ -99,7 +101,7 @@ class AdminController extends Controller
             $_SESSION['error'] = 'Error updating user';
         }
         
-        return $this->view('admin/users/edit', ['user' => $userData]);
+        return $this->render('admin/users/edit', ['user' => $userData]);
     }
 
     public function deleteUser($id)
