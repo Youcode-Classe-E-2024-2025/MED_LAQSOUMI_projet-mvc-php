@@ -30,7 +30,8 @@ $router->post('/dashboard/article/:id/delete', [DashboardController::class, 'del
 // Admin routes
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
 $router->get('/admin/users', [AdminController::class, 'users']);
-$router->get('/admin/users/create', [AdminController::class, 'createUser']);
+$router->get('admin/users/create', [AdminController::class, 'createUser']);
+$router->post('admin/users/create', [AdminController::class, 'createUser']);
 $router->post('/admin/users/store', [AdminController::class, 'storeUser']); // Add this for form submission
 $router->get('/admin/users/edit/:id', [AdminController::class, 'editUser']); // Change to GET for showing edit form
 $router->post('/admin/users/update/:id', [AdminController::class, 'updateUser']); // Add this for updating user

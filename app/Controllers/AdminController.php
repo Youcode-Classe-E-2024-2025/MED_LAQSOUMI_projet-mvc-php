@@ -62,7 +62,7 @@ public function createUser()
         
         if (User::create($data)) {  // Change to static method
             $_SESSION['success'] = 'User created successfully';
-            $this->redirect('/admin/users');
+            $this->redirect('/admin/dashboard');
         }
         
         $_SESSION['error'] = 'Error creating user';
