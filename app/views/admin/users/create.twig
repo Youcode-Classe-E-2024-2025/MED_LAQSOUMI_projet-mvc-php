@@ -1,4 +1,4 @@
-{% extends "layouts/admin.twig" %}
+{% extends "layouts/base.twig" %}
 
 {% block content %}
 <div class="container mt-4">
@@ -8,7 +8,7 @@
         <div class="alert alert-danger">{{ session.error }}</div>
     {% endif %}
 
-    <form action="{{ path('/admin/users/store') }}" method="POST">
+    <form action="/admin/users/create" method="POST">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required>
@@ -33,7 +33,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Create User</button>
-        <a href="{{ path('/admin/users') }}" class="btn btn-secondary">Cancel</a>
+        <a href="/admin/users" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}
