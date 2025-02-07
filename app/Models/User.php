@@ -7,6 +7,7 @@ use App\Core\Security;
 
 class User {
     private ?int $id = null;
+    private string $username;
     private string $email;
     private string $password;
     private string $role;
@@ -15,6 +16,7 @@ class User {
     public function __construct(array $data = []) {
         if (!empty($data)) {
             $this->id = $data['id'] ?? null;
+            $this->username = $data['username'] ?? '';
             $this->email = $data['email'] ?? '';
             $this->password = $data['password'] ?? '';
             $this->role = $data['role'] ?? 'user';
@@ -26,18 +28,19 @@ class User {
         $db = Database::getInstance();
         
         if ($this->id === null) {
-            $sql = "INSERT INTO users (email, password, role, created_at) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, ?)";
             $stmt = $db->prepare($sql);
             return $stmt->execute([
+                $this->username,
                 $this->email,
                 Security::hashPassword($this->password),
                 $this->role,
                 $this->created_at
             ]);
         } else {
-            $sql = "UPDATE users SET email = ?, role = ? WHERE id = ?";
+            $sql = "UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?";
             $stmt = $db->prepare($sql);
-            return $stmt->execute([$this->email, $this->role, $this->id]);
+            return $stmt->execute([$this->username, $this->email, $this->role, $this->id]);
         }
     }
     
@@ -71,12 +74,65 @@ class User {
     
     // Getters
     public function getId(): ?int { return $this->id; }
+    public function getUsername(): string { return $this->username; }
     public function getEmail(): string { return $this->email; }
     public function getRole(): string { return $this->role; }
     public function getCreatedAt(): string { return $this->created_at; }
     
     // Setters
+    public function setUsername(string $username): void { $this->username = $username; }
     public function setEmail(string $email): void { $this->email = $email; }
     public function setPassword(string $password): void { $this->password = $password; }
     public function setRole(string $role): void { $this->role = $role; }
+
+    // Admin methods
+    public static function findAll(): array {
+        $db = Database::getInstance();
+        $stmt = $db->query("SELECT * FROM users ORDER BY created_at DESC");
+        return $stmt->fetchAll();
+    }
+
+    public static function count(): int {
+        $db = Database::getInstance();
+        return $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    }
+
+    public static function findRecent(int $limit): array {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("SELECT * FROM users ORDER BY created_at DESC LIMIT ?");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
+
+    public static function delete(int $id): bool {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public static function update(int $id, array $data): bool {
+        $db = Database::getInstance();
+        $updates = [];
+        $values = [];
+
+        foreach ($data as $key => $value) {
+            if ($key === 'password') {
+                $updates[] = "password = ?";
+                $values[] = Security::hashPassword($value);
+            } else {
+                $updates[] = "$key = ?";
+                $values[] = $value;
+            }
+        }
+
+        $values[] = $id;
+        $sql = "UPDATE users SET " . implode(", ", $updates) . " WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute($values);
+    }
+
+    public static function create(array $data): bool {
+        $user = new self($data);
+        return $user->save();
+    }
 }
